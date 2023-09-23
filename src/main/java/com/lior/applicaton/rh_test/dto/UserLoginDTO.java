@@ -1,0 +1,16 @@
+package com.lior.applicaton.rh_test.dto;
+
+
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class UserLoginDTO {
+    @NotEmpty
+    String username;
+
+    @NotEmpty
+    String password;
+}
