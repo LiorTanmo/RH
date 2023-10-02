@@ -2,6 +2,7 @@ package com.lior.applicaton.rh_test.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -40,27 +41,16 @@ public class SecurityConfig {
 
         http.csrf(AbstractHttpConfigurer::disable);
 
-        http.formLogin(httpSecurityFormLoginConfigurer ->
-                httpSecurityFormLoginConfigurer
-                        .loginPage("/auth/login")
-                        .loginProcessingUrl("/process_login")
-                        .defaultSuccessUrl("/auth/login_success", true)
-                        .failureUrl("/auth/login?error")
-        );
-
         http.authorizeHttpRequests((auths) -> auths
-                        //.anyRequest().permitAll()
                         .requestMatchers("users/login").permitAll()
-                        .anyRequest().hasAnyRole("SUBSCRIBER", "JOURNALIST", "ADMIN")
+                        .requestMatchers(HttpMethod.GET).permitAll()
+                        .requestMatchers("/users/**","/comments/**").hasAnyRole("SUBSCRIBER", "JOURNALIST")
+                        .requestMatchers("/news/**").hasAnyRole("JOURNALIST")
+                        .anyRequest().hasRole("ADMIN")
                         );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-
-        http.logout((logoutCfg) ->
-                logoutCfg
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/auth/login"));
 
         return http.build();
     }

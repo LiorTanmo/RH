@@ -1,9 +1,12 @@
 package com.lior.applicaton.rh_test.model;
 
+import com.lior.applicaton.rh_test.util.NotAuthorizedException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +14,7 @@ import java.util.List;
 @Entity
 @Table
 @Getter@Setter
-public class News {
+public class    News {
 
     @Id
     @Column
@@ -29,13 +32,13 @@ public class News {
     @OneToMany(mappedBy = "commentednews")
     private List<Comment> comments;
 
-    @Column
-    @Temporal(TemporalType.DATE)
-    private Date creation_date;
-
-    @Column
-    @Temporal(TemporalType.DATE)
-    private Date last_edit_date;
+//    @Column
+//    @Temporal(TemporalType.DATE)
+//    private Date creation_date;
+//
+//    @Column
+//    @Temporal(TemporalType.DATE)
+//    private Date last_edit_date;
 
     @ManyToOne
     @JoinColumn(name = "inserted_by_id", referencedColumnName = "id")
@@ -44,4 +47,17 @@ public class News {
     @ManyToOne
     @JoinColumn(name = "updated_by_id", referencedColumnName = "id")
     private User updated_by;
+    @PreRemove
+    @PreUpdate
+    private void preventUnAuthorizedAccess() throws NotAuthorizedException {
+
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<SimpleGrantedAuthority> roles = (List<SimpleGrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+
+        if(roles.stream().noneMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))
+                && !name.equals(this.inserted_by.getUsername())){
+            throw new NotAuthorizedException("You can alter and remove only your own news");
+        }
+
+    }
 }

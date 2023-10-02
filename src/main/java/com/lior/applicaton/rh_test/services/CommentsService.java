@@ -1,14 +1,11 @@
 package com.lior.applicaton.rh_test.services;
 
-import com.lior.applicaton.rh_test.dto.CommentDTO;
 import com.lior.applicaton.rh_test.model.Comment;
 import com.lior.applicaton.rh_test.model.News;
 import com.lior.applicaton.rh_test.repos.CommentsRepository;
 import com.lior.applicaton.rh_test.repos.NewsRepository;
 import com.lior.applicaton.rh_test.security.UserAccountDetails;
 import com.lior.applicaton.rh_test.util.NewsNotFoundException;
-import org.hibernate.Hibernate;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -16,8 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//TODO access control
-//TODO
+
 @Service
 @Transactional
 public class CommentsService {
@@ -25,20 +21,24 @@ public class CommentsService {
     private final CommentsRepository commentsRepository;
     private  final NewsRepository newsRepository;
 
-    public CommentsService(CommentsRepository commentsRepository, NewsRepository newsRepository, ModelMapper modelMapper) {
+    public CommentsService(CommentsRepository commentsRepository, NewsRepository newsRepository) {
         this.commentsRepository = commentsRepository;
         this.newsRepository = newsRepository;
     }
+
     public Page<Comment> findAll(int news_id, int page, int comms_per_page){
         return commentsRepository.findCommentsByCommentednews(
                 newsRepository.findById(news_id).orElseThrow(NewsNotFoundException::new),
                 PageRequest.of(page,comms_per_page));
     }
+    public void removeComment(int comm_id){
+        commentsRepository.deleteById(comm_id);
+    }
+
 
     public void removeComment(int news_id, int com_num){
         News news = newsRepository.findById(news_id).orElseThrow(NewsNotFoundException::new);
-        Hibernate.initialize(news.getComments());
-        news.getComments().remove(com_num);
+        commentsRepository.delete(news.getComments().remove(com_num));
         newsRepository.save(news);
     }
 

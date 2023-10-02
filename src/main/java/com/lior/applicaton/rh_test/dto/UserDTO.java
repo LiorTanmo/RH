@@ -16,4 +16,6 @@ public class UserDTO {
     private String surname;
 
     private String parentName;
+
+    private String role;
 }

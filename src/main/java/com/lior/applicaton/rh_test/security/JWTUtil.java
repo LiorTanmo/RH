@@ -20,11 +20,12 @@ public class JWTUtil {
     private String secret;
 
     public String generateToken(String username){
-        Date expieationDate= Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
+        Date expieationDate=Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
 
         return JWT.create()
                 .withSubject("UserDetails")
                 .withClaim("username", username)
+                //.withClaim("roles", )
                 .withIssuedAt(new Date())
                 .withIssuer("Lior")
                 .withExpiresAt(expieationDate)

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Component
 public class ErrorPrinter {
-    public void printErrors(BindingResult bindingResult){
+    public void printFieldErrors(BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             StringBuilder errMsg = new StringBuilder();
             List<FieldError> errors = bindingResult.getFieldErrors();

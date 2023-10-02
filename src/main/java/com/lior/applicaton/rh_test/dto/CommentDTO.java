@@ -1,6 +1,7 @@
 package com.lior.applicaton.rh_test.dto;
 
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +10,10 @@ import lombok.Setter;
 @Getter@Setter
 public class CommentDTO {
 
+    int id;
+
     @Size(max = 300, message = "Up to 300 characters")
+    @NotNull
     private String text;
 
     private UserDTO comment_author;

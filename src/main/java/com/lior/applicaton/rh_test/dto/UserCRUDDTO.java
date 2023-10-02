@@ -22,6 +22,6 @@ public class UserCRUDDTO {
     @NotEmpty(message = "parentName can't be empty")
     private String parentName;
 
-    @NotEmpty(message = "Role can't be empty")
+    //@NotEmpty(message = "Role can't be empty")
     private String role;
 }

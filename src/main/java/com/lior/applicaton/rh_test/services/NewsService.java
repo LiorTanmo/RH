@@ -26,13 +26,11 @@ import java.util.Optional;
 public class NewsService {
     private final NewsRepository newsRepository;
     private final CommentsRepository commentsRepository;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public NewsService(NewsRepository newsRepository, CommentsRepository commentsRepository, ModelMapper modelMapper) {
+    public NewsService(NewsRepository newsRepository, CommentsRepository commentsRepository) {
         this.newsRepository = newsRepository;
         this.commentsRepository = commentsRepository;
-        this.modelMapper = modelMapper;
     }
 
     public News findOne(int id){
@@ -68,17 +66,19 @@ public class NewsService {
         newsRepository.deleteById(id);
     }
 
-    public List<Comment> getCommentsByNewsId (int id){
-        Optional<News> news = newsRepository.findById(id);
-        if (news.isPresent()){
-            Hibernate.initialize(news.get().getComments());
-            return news.get().getComments();
-        }else throw new NewsNotFoundException();
-    }
+//    public List<Comment> getCommentsByNewsId (int id){
+//        Optional<News> news = newsRepository.findById(id);
+//        if (news.isPresent()){
+//            Hibernate.initialize(news.get().getComments());
+//            return news.get().getComments();
+//        }else throw new NewsNotFoundException();
+//    }
+
 //paginated comments
     public Page<Comment> getCommentsByNewsId (int id, int page, int commsPerPage){
         Optional<News> news = newsRepository.findById(id);
         if (news.isPresent()){
+            Hibernate.initialize(news);
             return commentsRepository
                     .findCommentsByCommentednews(news.get(), PageRequest.of(page, commsPerPage));
         }else throw new NewsNotFoundException();
