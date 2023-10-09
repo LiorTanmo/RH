@@ -8,6 +8,7 @@ import com.lior.applicaton.rh_test.model.Comment;
 import com.lior.applicaton.rh_test.services.CommentsService;
 import com.lior.applicaton.rh_test.util.*;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,17 +18,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("comments/{news_id}")
+@AllArgsConstructor
 public class CommentsController {
 
     private final CommentsService commentsService;
     private final ErrorPrinter errorPrinter;
     private final ModelMapper modelMapper;
 
-    public CommentsController(CommentsService commentsService, ErrorPrinter errorPrinter, ModelMapper modelMapper) {
-        this.commentsService = commentsService;
-        this.errorPrinter = errorPrinter;
-        this.modelMapper = modelMapper;
-    }
     @PostMapping
     public ResponseEntity<HttpStatus> addComment(@RequestBody @Valid CommentDTO commentDTO,
                                                  BindingResult bindingResult,

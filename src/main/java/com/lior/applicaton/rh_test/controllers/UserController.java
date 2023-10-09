@@ -9,6 +9,7 @@ import com.lior.applicaton.rh_test.security.UserAccountDetails;
 import com.lior.applicaton.rh_test.services.UsersService;
 import com.lior.applicaton.rh_test.util.*;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,29 +24,17 @@ import org.springframework.web.bind.annotation.*;
 
 //TODO
 @RestController
+@AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
+
     private final UsersService usersService;
     private final ModelMapper modelMapper;
     private final UserValidator userValidator;
     private final ErrorPrinter errorPrinter;
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authManager;
-
     private final PasswordEncoder passwordEncoder;
-
-
-    public UserController(UsersService usersService, ModelMapper modelMapper, UserValidator userValidator, ErrorPrinter errorPrinter, JWTUtil jwtUtil
-            , AuthenticationManager authManager,
-                          PasswordEncoder passwordEncoder) {
-        this.usersService = usersService;
-        this.modelMapper = modelMapper;
-        this.userValidator = userValidator;
-        this.errorPrinter = errorPrinter;
-        this.jwtUtil = jwtUtil;
-        this.authManager = authManager;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody @Valid UserLoginDTO loginDTO,

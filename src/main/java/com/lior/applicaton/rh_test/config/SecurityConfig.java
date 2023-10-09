@@ -1,5 +1,6 @@
 package com.lior.applicaton.rh_test.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,15 +25,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 @Configuration
+@AllArgsConstructor
 public class SecurityConfig {
 
     private final UserInfoService userDetailsService;
     private final JWTFilter jwtFilter;
 
-    public SecurityConfig(UserInfoService userDetailsService, JWTFilter jwtFilter) {
-        this.userDetailsService = userDetailsService;
-        this.jwtFilter = jwtFilter;
-    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 

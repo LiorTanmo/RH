@@ -9,6 +9,7 @@ import com.lior.applicaton.rh_test.util.ErrorPrinter;
 import com.lior.applicaton.rh_test.util.ErrorResponse;
 import com.lior.applicaton.rh_test.util.NewsNotFoundException;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,19 +25,12 @@ import java.util.List;
 //TODO
 @RestController
 @RequestMapping("/news")
+@AllArgsConstructor
 public class NewsController {
 
     private final NewsService newsService;
     private final ModelMapper modelMapper;
-
     private  final ErrorPrinter errorPrinter;
-
-    @Autowired
-    public NewsController(NewsService newsService, ModelMapper modelMapper, ErrorPrinter errorPrinter) {
-        this.newsService = newsService;
-        this.modelMapper = modelMapper;
-        this.errorPrinter = errorPrinter;
-    }
 
     @PostMapping("/post")
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid NewsDTO newsDTO,

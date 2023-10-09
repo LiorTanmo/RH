@@ -3,6 +3,7 @@ package com.lior.applicaton.rh_test.model;
 import com.lior.applicaton.rh_test.util.NotAuthorizedException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Entity
 @Table
-@Getter@Setter
+@Data
 public class    News {
 
     @Id

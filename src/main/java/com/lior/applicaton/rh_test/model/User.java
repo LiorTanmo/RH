@@ -4,6 +4,7 @@ import com.lior.applicaton.rh_test.util.NotAuthorizedException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.mapping.Collection;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Getter@Setter
+@Data
 public class User {
 
     @Id
@@ -46,6 +47,8 @@ public class User {
     @Column(name = "parent_name")
     @Size(max = 20, message = "No more than 20 characters")
     private String parentName;
+
+    //на случай если понадобится
 
 //    @Column
 //    @Temporal(TemporalType.DATE)

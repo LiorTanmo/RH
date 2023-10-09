@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserLoginDTO {
+
     @NotEmpty
     String username;
 
