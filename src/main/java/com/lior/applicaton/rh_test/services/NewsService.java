@@ -1,6 +1,5 @@
 package com.lior.applicaton.rh_test.services;
 
-import com.lior.applicaton.rh_test.dto.NewsDTO;
 import com.lior.applicaton.rh_test.model.Comment;
 import com.lior.applicaton.rh_test.model.News;
 import com.lior.applicaton.rh_test.repos.CommentsRepository;
@@ -8,7 +7,6 @@ import com.lior.applicaton.rh_test.repos.NewsRepository;
 import com.lior.applicaton.rh_test.security.UserAccountDetails;
 import com.lior.applicaton.rh_test.util.NewsNotFoundException;
 import org.hibernate.Hibernate;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-//TODO access control
 @Service
 @Transactional
 public class NewsService {
@@ -37,9 +34,6 @@ public class NewsService {
         return newsRepository.findById(id).orElseThrow(NewsNotFoundException::new);
     }
 
-    public List<News> findAll(){
-        return newsRepository.findAll();
-    }
 
     public Page<News> findAll(int page, int newsPerPage){
         return newsRepository.findAll(PageRequest.of(page, newsPerPage));
@@ -85,6 +79,6 @@ public class NewsService {
     }
 
     public List<News> search(String search){
-        return newsRepository.findByTextStartingWithOrTitleStartingWith(search, search);
+        return newsRepository.findByTextContainingOrTitleContaining(search, search);
     }
 }

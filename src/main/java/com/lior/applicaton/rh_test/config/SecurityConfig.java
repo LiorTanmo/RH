@@ -42,7 +42,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests((auths) -> auths
                         .requestMatchers("users/login").permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
-                        .requestMatchers("/users/**","/comments/**").hasAnyRole("SUBSCRIBER", "JOURNALIST")
+                        .requestMatchers(HttpMethod.PATCH, "/users/**").authenticated()
+                        .requestMatchers("/comments/**").authenticated()
                         .requestMatchers("/news/**").hasAnyRole("JOURNALIST")
                         .anyRequest().hasRole("ADMIN")
                         );

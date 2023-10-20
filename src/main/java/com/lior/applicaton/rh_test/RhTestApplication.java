@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class RhTestApplication {
 
-   // static final Logger log = (Logger) LoggerFactory.getLogger(RhTestApplication.class);
+    static final Logger log = LoggerFactory.getLogger(RhTestApplication.class);
     public static void main(String[] args) {
         SpringApplication.run(RhTestApplication.class, args);
     }

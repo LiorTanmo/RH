@@ -5,12 +5,9 @@ import com.lior.applicaton.rh_test.util.NotAuthorizedException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -43,17 +40,19 @@ public class Comment {
     @JoinColumn(name = "id_news", referencedColumnName = "id")
     private News commentednews;
 
-    //предотвращение неавторизированных изменений (разрешает изменение и удаление только авторам и админам)
-
+    //TODO make more scalable solution
+    //prevents unauthorized modifications by comparing usernames of creator
+    //and active session user (or if active user is Admin)
     @PreRemove
     @PreUpdate
     private void preventUnAuthorizedAccess() throws NotAuthorizedException {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         List<SimpleGrantedAuthority> roles = (List<SimpleGrantedAuthority>) SecurityContextHolder.getContext()
                 .getAuthentication().getAuthorities();
-
+        //checks if active user is Admin, comment author, or commented News Author
         if(roles.stream().noneMatch(ga -> ga.getAuthority().equals("ROLE_ADMIN"))
-                && !name.equals(this.inserted_by.getUsername())){
+                && !(name.equals(this.inserted_by.getUsername())
+                || name.equals(this.commentednews.getInserted_by().getUsername()))){
             throw new NotAuthorizedException("You can alter and remove only your own comments");
         }
 

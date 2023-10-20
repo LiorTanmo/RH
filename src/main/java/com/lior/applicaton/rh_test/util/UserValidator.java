@@ -5,7 +5,6 @@ import com.lior.applicaton.rh_test.services.UsersService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 @Component
 public class UserValidator implements Validator {

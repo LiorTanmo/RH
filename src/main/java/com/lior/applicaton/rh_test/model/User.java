@@ -5,15 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.mapping.Collection;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.management.relation.Role;
 import java.util.List;
 
 @Entity
@@ -48,7 +42,7 @@ public class User {
     @Size(max = 20, message = "No more than 20 characters")
     private String parentName;
 
-    //на случай если понадобится
+    //just in case
 
 //    @Column
 //    @Temporal(TemporalType.DATE)
@@ -70,6 +64,10 @@ public class User {
     @Column
     private String role;
 
+
+    //TODO make more scalable solution
+    //prevents unauthorized modifications by comparing usernames of creator
+    // and active session user (or if active user is Admin)
     @PreRemove
     @PreUpdate
     private void preventUnAuthorizedRemove() throws NotAuthorizedException {

@@ -1,14 +1,12 @@
 package com.lior.applicaton.rh_test.services;
 
 import com.lior.applicaton.rh_test.model.User;
-import com.lior.applicaton.rh_test.repos.NewsRepository;
 import com.lior.applicaton.rh_test.repos.UsersRepository;
 import com.lior.applicaton.rh_test.util.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 //TODO

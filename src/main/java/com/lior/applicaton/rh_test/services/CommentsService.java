@@ -6,6 +6,7 @@ import com.lior.applicaton.rh_test.repos.CommentsRepository;
 import com.lior.applicaton.rh_test.repos.NewsRepository;
 import com.lior.applicaton.rh_test.security.UserAccountDetails;
 import com.lior.applicaton.rh_test.util.NewsNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -16,15 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class CommentsService {
 
     private final CommentsRepository commentsRepository;
     private  final NewsRepository newsRepository;
 
-    public CommentsService(CommentsRepository commentsRepository, NewsRepository newsRepository) {
-        this.commentsRepository = commentsRepository;
-        this.newsRepository = newsRepository;
-    }
 
     public Page<Comment> findAll(int news_id, int page, int comms_per_page){
         return commentsRepository.findCommentsByCommentednews(
@@ -33,6 +31,10 @@ public class CommentsService {
     }
     public void removeComment(int comm_id){
         commentsRepository.deleteById(comm_id);
+    }
+
+    public void clearCommentsByNewsId(int id){
+
     }
 
 

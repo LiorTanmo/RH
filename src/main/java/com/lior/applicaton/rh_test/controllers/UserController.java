@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 //TODO
 @RestController
@@ -36,6 +39,12 @@ public class UserController {
     private final AuthenticationManager authManager;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Method for user authentication.
+     * @param loginDTO Credentials
+     * @param bindingResult Field error holder
+     * @return OK status with Authorisation header, containing JWT or Exception Handler response
+     */
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody @Valid UserLoginDTO loginDTO,
                                             BindingResult bindingResult){
@@ -53,7 +62,11 @@ public class UserController {
         return ResponseEntity.ok().headers(headers).body(HttpStatus.OK);
     }
 
-
+    /**
+     * User info by username
+     * @param username Username of the User
+     * @return UserDTO
+     */
     @GetMapping("/{username}")
     public UserDTO userPage (@PathVariable(name = "username") String username){
         User user = usersService.findUserByUsername(username)
@@ -61,6 +74,10 @@ public class UserController {
         return toDTO(user);
     }
 
+    /**
+     * Current user info
+     * @return User DTO
+     */
     @GetMapping("/userInfo")
     public UserDTO currentUserInfo (){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -69,7 +86,13 @@ public class UserController {
         return toDTO(currentUser);
     }
 
-
+    /**
+     * Method for creating new users. Admin Only
+     * @param userCRUDDTO User Information
+     * @param bindingResult Field Error holder
+     * @return HttpStatus created or error response
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/registration")
     public ResponseEntity<HttpStatus> registration(@RequestBody @Valid UserCRUDDTO userCRUDDTO,
                                              BindingResult bindingResult){
@@ -83,20 +106,49 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
 
         headers.add("Authorization", "Bearer " + jwt);
-        return ResponseEntity.ok().headers(headers).body(HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(HttpStatus.CREATED);
     }
 
+    //probably ID should be replaced by username
+    /**
+     * Edit user info. Changing roles is available only for admins.
+     * Non-admin user role in input will be replaced by their current role.
+     * @param userCRUDDTO New user info
+     * @param bindingResult Field error holder
+     * @param id ID of user to be changed
+     * @return HttpStatus OK or error response
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> edit(@RequestBody @Valid UserCRUDDTO userCRUDDTO,
                                            BindingResult bindingResult,
                                            @PathVariable(name = "id") int id){
         User user = modelMapper.map(userCRUDDTO, User.class);
+        if (user.getRole() == null){user.setRole("ROLE_SUBSCRIBER");}
+
+        //Prevents non-admin users from changing roles, probably should be separate DTO
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserAccountDetails userAccountDetails = (UserAccountDetails) authentication.getPrincipal();
+        User currentUser = userAccountDetails.getUser();
+        if (!Objects.equals(currentUser.getRole(), "ROLE_ADMIN")){
+            user.setRole(usersService.findOne(id).getRole());
+        }
 
         userValidator.validate(user, bindingResult);
         errorPrinter.printFieldErrors(bindingResult);
 
         usersService.update(id, user);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    /**
+     * Deleting user by ID
+     * @param id Target User id
+     * @return HttpStatus No_Content or Error response
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteUser (@PathVariable(name = "id") int id){
+        usersService.delete(id);
+        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler
